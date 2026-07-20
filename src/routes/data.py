@@ -26,6 +26,6 @@ async def upload_data(
         return JSONResponse(
              status_code=status.HTTP_200_OK,
              content= {
-                "signal":ResponseSignal.FILE_UPLOAD_SUCCESS
+                "signal":ResponseSignal.FILE_UPLOAD_SUCCESS.value
             })  
         
