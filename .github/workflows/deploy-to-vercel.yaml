@@ -9,7 +9,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4   
-        run: ls -alp
-      
+      - name: List files in the repository  
+        run: |
+        ls alp
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
