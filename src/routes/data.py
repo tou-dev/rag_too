@@ -20,7 +20,7 @@ async def upload_data(
         file_path=os.path.join(project_dir_path,file.filename)
         
         async with aiofiles.open(file_path,"wb") as f:
-            while chunk:= await file.read(app_settings.FILE_PARTIE_SIZE):
+            while chunk:= await file.read(app_settings.FILE_DEFAULT_CHUNK_SIZE):
                 await f.write(chunk)
 
         return JSONResponse(

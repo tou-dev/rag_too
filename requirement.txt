@@ -1,0 +1,32 @@
+fastapi
+uvicorn[standard]
+python-multipart
+python-dotenv
+pydantic-settings
+aiofiles
+langchain
+PyMuPDF
+motor
+pydantic-mongo
+openai
+cohere
+qdrant-client
+SQLAlchemy
+asyncpg
+alembic
+psycopg2-binary
+pgvector
+nltk
+
+# Monitoring and metrics
+prometheus-client
+starlette-exporter
+fastapi-health
+
+# Task Queue and Background Processing
+celery
+redis
+kombu
+billiard
+vine
+flower
