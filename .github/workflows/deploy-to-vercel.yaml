@@ -11,6 +11,6 @@ jobs:
         uses: actions/checkout@v4   
       - name: List files in the repository  
         run: |
-        ls alp
+          ls -alp
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
