@@ -7,6 +7,11 @@ class Settings(BaseSettings):
     FILE_ALLOWED_TYPES:list
     FILE_DEFAULT_CHUNK_SIZE:int
 
+    # Supabase Settings
+    SUPABASE_URL: str
+    SUPABASE_SERVICE_ROLE_KEY: str
+    SUPABASE_BUCKET_NAME: str = "uploads"
+
 
     class config:
         env_file=".env"

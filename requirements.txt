@@ -17,6 +17,7 @@ alembic
 psycopg2-binary
 pgvector
 nltk
+supabase
 
 # Monitoring and metrics
 prometheus-client
