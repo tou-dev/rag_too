@@ -17,21 +17,24 @@ async def upload_data(
     file: UploadFile,
     app_settings: Settings = Depends(get_settings)
 ):
+    # 1. Clean URL formatting
+    supabase_url = app_settings.SUPABASE_URL.rstrip("/")
+    
+    # 2. Initialize Supabase Client
+    supabase: Client = create_client(
+        supabase_url,
+        app_settings.SUPABASE_SERVICE_ROLE_KEY
+    )
+
+    bucket_name = app_settings.SUPABASE_BUCKET_NAME
+
     try:
-        # 1. Read file bytes into memory
+        # 3. Read file bytes into memory
         file_bytes = await file.read()
-
-        # 2. Initialize Supabase Client
-        supabase: Client = create_client(
-            app_settings.SUPABASE_URL,
-            app_settings.SUPABASE_SERVICE_ROLE_KEY
-        )
-
-        # 3. Create scoped path in bucket: <project_id>/<filename>
         storage_path = f"{project_id}/{file.filename}"
 
-        # 4. Upload in-memory bytes to Supabase Storage
-        supabase.storage.from_(app_settings.SUPABASE_BUCKET_NAME).upload(
+        # 4. Upload to Supabase Storage
+        res = supabase.storage.from_(bucket_name).upload(
             path=storage_path,
             file=file_bytes,
             file_options={
@@ -47,16 +50,14 @@ async def upload_data(
                 "file_path": storage_path
             }
         )
+
     except Exception as e:
-        # Extract meaningful message from dictionary or exception objects
-        if isinstance(e, dict):
-            error_detail = e.get("message") or e.get("error") or str(e)
-        elif hasattr(e, "message"):
-            error_detail = e.message
-        else:
-            error_detail = str(e)
+        # Fallback to inspect dictionary-based SDK exceptions
+        error_msg = str(e)
+        if hasattr(e, "args") and e.args:
+            error_msg = str(e.args[0])
 
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Supabase Upload Failed: {error_detail}"
+            detail=f"Storage Exception on bucket '{bucket_name}': {error_msg}"
         )
