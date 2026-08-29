@@ -18,7 +18,7 @@ async def upload_data(
     app_settings: Settings = Depends(get_settings)
 ):
     try:
-        # 1. Read file binary content in memory (bypasses read-only filesystem)
+        # 1. Read file bytes into memory
         file_bytes = await file.read()
 
         # 2. Initialize Supabase Client
@@ -34,7 +34,10 @@ async def upload_data(
         supabase.storage.from_(app_settings.SUPABASE_BUCKET_NAME).upload(
             path=storage_path,
             file=file_bytes,
-            file_options={"content-type": file.content_type or "application/octet-stream", "upsert": "true"}
+            file_options={
+                "content-type": file.content_type or "application/octet-stream",
+                "upsert": "true"
+            }
         )
 
         return JSONResponse(
@@ -45,4 +48,15 @@ async def upload_data(
             }
         )
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+        # Extract meaningful message from dictionary or exception objects
+        if isinstance(e, dict):
+            error_detail = e.get("message") or e.get("error") or str(e)
+        elif hasattr(e, "message"):
+            error_detail = e.message
+        else:
+            error_detail = str(e)
+
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Supabase Upload Failed: {error_detail}"
+        )
