@@ -17,3 +17,12 @@ async def welcome(app_settings:Settings=Depends(get_settings)):
         "app_ersion":app_version,
 
     }
+
+@base_router.get("/vercel/health")
+async def vercel_health(app_settings:Settings=Depends(get_settings)):
+    app_name=app_settings.APP_NAME
+    return {
+        "app_name":app_name,
+        "running_on_vercel":True,
+
+    }
